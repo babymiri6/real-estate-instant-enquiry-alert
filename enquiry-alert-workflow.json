@@ -1,0 +1,373 @@
+{
+  "name": "Real Estate - Instant Enquiry Alert.",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Request a Property Viewing",
+        "formDescription": "Submit your details and preferred viewing date. Our agent will contact you to confirm availability.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full name",
+              "fieldName": "full_name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email address",
+              "fieldType": "email",
+              "fieldName": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Property of interest",
+              "fieldType": "dropdown",
+              "fieldName": "property",
+              "defaultValue": "Select a property",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Two-bedroom apartment — East Legon"
+                  },
+                  {
+                    "option": "Three-bedroom house — Spintex"
+                  },
+                  {
+                    "option": "One-bedroom apartment — Cantonments"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Preferred Viewing Date",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "placeholder": "e.g. 0241234567 or +233241234567",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1c7bef44-b404-4bbe-bbe9-edb5d613da51",
+      "name": "Request a Property Viewing",
+      "webhookId": "510eca77-3ab0-4535-b4b5-1d199422c6fa"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b370fbcf-609c-41e0-b279-0f8da8a3cd5c",
+              "name": "fullName",
+              "value": "={{ $json.full_name }}",
+              "type": "string"
+            },
+            {
+              "id": "52b5fc49-0aa5-4397-a696-a1efd054edbe",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "90bd319f-7525-46b2-b113-afd9e7433252",
+              "name": "propertyOfInterest",
+              "value": "={{ $json.property }}",
+              "type": "string"
+            },
+            {
+              "id": "e7086de3-5e37-4e62-b98f-6349e745536f",
+              "name": "preferredViewingDate",
+              "value": "={{ $json['Preferred Viewing Date'] }}",
+              "type": "string"
+            },
+            {
+              "id": "13d67f38-dcd7-422b-ba5a-1b77089b4cbf",
+              "name": "phoneNumber",
+              "value": "={{ $json['Phone Number'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a3a55cd0-917d-4b12-b7e0-351ba3f0dfa5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "234e5bef-a71c-4dfb-b708-8a8e112a4697",
+              "leftValue": "={{ $json.fullName }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "5133cdc6-f72c-425f-b118-b6b43584bfa1",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f3e093c6-58e4-465c-baff-307adb1eff4a",
+              "leftValue": "={{ $json.phoneNumber }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "0dfcffbf-5aa0-469f-bf49-ec2ec1af2e2c",
+              "leftValue": "={{ $json.propertyOfInterest }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "19218cb7-1268-451c-9e05-63629a05d987",
+              "leftValue": "={{ $json.preferredViewingDate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "a3448a5b-4f99-4b2b-9f84-7bec3aea775d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=We’ve received your property viewing request",
+        "emailType": "text",
+        "message": "=Hi {{ $json.fullName }},\n\nThank you for your interest in {{ $json.propertyOfInterest }}.\n\nWe have received your request for a viewing on {{ $json.preferredViewingDate }}.\n\nOur agent will contact you to confirm availability and arrange the viewing.\n\nPlease note that your viewing is not yet confirmed.  Thank you!",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -208
+      ],
+      "id": "5a733796-8ff6-43a4-b1c8-d4bea4c7b723",
+      "name": "Client Acknowledgement",
+      "webhookId": "5cffca48-c799-4eda-8223-1fef4161aaf0"
+    },
+    {
+      "parameters": {
+        "sendTo": "agent@example.invalid",
+        "subject": "=New Property Viewing Enquiry — {{ $('If').item.json.propertyOfInterest }}",
+        "emailType": "text",
+        "message": "=NEW PROPERTY VIEWING ENQUIRY\n\nBuyer Name: {{ $('If').item.json.fullName }}\nBuyer Email: {{ $('If').item.json.email }}\nBuyer Phone: {{ $('If').item.json.phoneNumber }}\nProperty: {{ $('If').item.json.propertyOfInterest }}\nPreferred Viewing Date: {{ $('If').item.json.preferredViewingDate }}\n\nPlease contact the buyer to confirm availability and arrange the viewing.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        -208
+      ],
+      "id": "e55b91f4-1fbb-402f-a2d0-d04af0da511f",
+      "name": "Agent alert",
+      "webhookId": "6e8c7172-176c-49c7-af5d-f1ad7df4fcdb"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "74a93fc3-d721-4c08-9148-a84ef29f0e8e",
+              "name": "status",
+              "value": "rejected",
+              "type": "string"
+            },
+            {
+              "id": "c98bba8d-b758-435c-9f3a-cbcae89d703e",
+              "name": "reason",
+              "value": "Required enquiry information is missing or invalid",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        864,
+        96
+      ],
+      "id": "97e5f013-12eb-4655-a794-b297b28bb150",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4b431bd9-9831-4918-ad03-2fd4ddbe3bb8",
+              "leftValue": "={{ $json.phoneNumber.replace(/[\\s()-]/g, '') }}",
+              "rightValue": "=^(?:\\+233|0)[0-9]{9}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        432,
+        0
+      ],
+      "id": "cdff519d-5f54-432f-aae5-f889e8898027",
+      "name": "Validate Phone Number"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Request a Property Viewing": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Validate Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Client Acknowledgement",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Client Acknowledgement": {
+      "main": [
+        [
+          {
+            "node": "Agent alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent alert": {
+      "main": [
+        []
+      ]
+    },
+    "Validate Phone Number": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "4698b424-6378-4aeb-82b2-14e35e538419",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "Y3C2ePsm2vEBlgiT",
+  "tags": []
+}
